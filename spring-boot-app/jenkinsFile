@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Static Code Analysis') {
             environment {
-                SONAR_URL = "http://3.80.180.55:9000"
+                SONAR_URL = "http://54.86.250.55:9000"
             }
             steps {
                 withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
@@ -33,7 +33,7 @@ pipeline {
         stage('Build and Push Docker Image') {
              environment {
                 DOCKER_IMAGE = "kavin23/ultimate-cicd:${BUILD_NUMBER}"
-                REGISTRY_CREDENTIALS = credentials('docker-build')
+                REGISTRY_CREDENTIALS = credentials('docker-cred')
             }
                 steps {
                     script {
@@ -64,7 +64,7 @@ pipeline {
                         git config user.name "kavin238"
                         BUILD_NUMBER=${BUILD_NUMBER}
                         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" End-to-End-CICD/k8s-manifests/deployment.yml
-                        git add End-to-End-CICD/k8s-manifests/deployment.yml
+                        git add k8s-manifests/deployment.yml
                         git commit -m "Update deployment image to version ${BUILD_NUMBER}"
                         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
                     '''
